@@ -36,28 +36,34 @@ class _Pattern:
 
     index: int
     name: str
-    group: str          # 'functional_group' | 'cyclic' | 'biological'
+    group: str  # 'functional_group' | 'cyclic' | 'biological'
     smarts: str
     hierarchy: tuple[int, ...]
     query: Chem.Mol
     n_bonds: int
-    fp: object                       # pattern fingerprint (for subset screen)
+    fp: DataStructs.ExplicitBitVect  # pattern fingerprint (for subset screen)
     # descriptor minima the target must meet for this pattern to be possible
     min_heavy: int
     min_rings: int
-    min_counts: tuple[int, ...]      # (C, N, O, S, P, halogen, other)
+    min_counts: tuple[int, ...]  # (C, N, O, S, P, halogen, other)
 
 
 def _atom_counts(mol: Chem.Mol) -> tuple[int, ...]:
     c = n = o = s = p = hal = 0
     for a in mol.GetAtoms():
         z = a.GetAtomicNum()
-        if z == 6: c += 1
-        elif z == 7: n += 1
-        elif z == 8: o += 1
-        elif z == 16: s += 1
-        elif z == 15: p += 1
-        elif z in _HALOGENS: hal += 1
+        if z == 6:
+            c += 1
+        elif z == 7:
+            n += 1
+        elif z == 8:
+            o += 1
+        elif z == 16:
+            s += 1
+        elif z == 15:
+            p += 1
+        elif z in _HALOGENS:
+            hal += 1
     heavy = mol.GetNumHeavyAtoms()
     other = heavy - c - n - o - s - p - hal
     return (c, n, o, s, p, hal, other)
@@ -93,7 +99,7 @@ class SmartChemistAnnotator:
         hierarchy_by_index: dict[int, tuple[int, ...]] = {}
         if hierarchy_csv:
             hdf = pd.read_csv(hierarchy_csv, skiprows=1)
-            for i, row in hdf.iterrows():
+            for _, row in hdf.iterrows():
                 raw = str(row.get("Hierarchy", "")).strip()
                 if raw and raw not in ("[]", "nan"):
                     hierarchy_by_index[int(row.iloc[0])] = tuple(
@@ -133,8 +139,7 @@ class SmartChemistAnnotator:
                         n_bonds=q.GetNumBonds(),
                         fp=fp,
                         min_heavy=q.GetNumHeavyAtoms(),
-                        min_rings=rdMolDescriptors.CalcNumRings(q)
-                        if group != "functional_group" else 0,
+                        min_rings=rdMolDescriptors.CalcNumRings(q) if group != "functional_group" else 0,
                         min_counts=_atom_counts(q),
                     )
                 )
@@ -217,7 +222,7 @@ class SmartChemistAnnotator:
                 if sub is m:
                     continue
                 asub = set(sub["atom_indices"])
-                if am < asub:                       # m strictly inside sub
+                if am < asub:  # m strictly inside sub
                     m["overshadowed"] = True
                     break
                 if am == asub and m["n_bonds"] < sub["n_bonds"]:
@@ -225,7 +230,5 @@ class SmartChemistAnnotator:
                     break
 
 
-def annotate_supplier(
-    annotator: SmartChemistAnnotator, mols: Iterable[Chem.Mol]
-) -> list[list[dict]]:
+def annotate_supplier(annotator: SmartChemistAnnotator, mols: Iterable[Chem.Mol]) -> list[list[dict]]:
     return [annotator.annotate(m) for m in mols if m is not None]

@@ -84,9 +84,7 @@ class RBond:
 
 def prepare_rbrics() -> dict:
     """Compile R-BRICS chemical-group and bond patterns once."""
-    groups = {
-        tag: Chem.MolFromSmarts(p) for tag, p in RBRICSChemicalGroups().patterns.items()
-    }
+    groups = {tag: Chem.MolFromSmarts(p) for tag, p in RBRICSChemicalGroups().patterns.items()}
     bonds = {}
     for tag, p in RBRICSRetrosynthesisBound().patterns.items():
         t1, t2 = tag.split("-")
@@ -132,20 +130,20 @@ def find_rbrics_bonds_live(mol: Chem.Mol, rbrics: dict | None = None) -> list[RB
 @dataclass
 class Block:
     block_id: int
-    atom_indices: tuple[int, ...]        # original (live) heavy-atom indices
-    motif_names: tuple[str, ...]         # distinct winning motifs covering it
-    smiles: str                          # sub-SMILES with [id*] dummy attachments
-    region_ids: tuple[int, ...] = ()     # internal partition regions merged here
+    atom_indices: tuple[int, ...]  # original (live) heavy-atom indices
+    motif_names: tuple[str, ...]  # distinct winning motifs covering it
+    smiles: str  # sub-SMILES with [id*] dummy attachments
+    region_ids: tuple[int, ...] = ()  # internal partition regions merged here
 
 
 @dataclass
 class BlockEdge:
     block_i: int
     block_j: int
-    atom_i: int                          # original index in block_i
-    atom_j: int                          # original index in block_j
-    tag_i: str                           # R-BRICS env tag on the block_i side
-    tag_j: str                           # R-BRICS env tag on the block_j side
+    atom_i: int  # original index in block_i
+    atom_j: int  # original index in block_j
+    tag_i: str  # R-BRICS env tag on the block_i side
+    tag_j: str  # R-BRICS env tag on the block_j side
 
 
 @dataclass
@@ -254,10 +252,10 @@ def _assign_regions(
             ),
         )
         motif_region = {mk: pos for pos, mk in enumerate(order)}
-        for mk in order:                      # assign low priority first ...
+        for mk in order:  # assign low priority first ...
             for at in winning[mk]["atom_indices"]:
                 region[at] = motif_region[mk]
-        for mk in reversed(order):            # ... then overwrite with high priority
+        for mk in reversed(order):  # ... then overwrite with high priority
             for at in winning[mk]["atom_indices"]:
                 region[at] = motif_region[mk]
 
@@ -327,9 +325,7 @@ def build_block_graph(
         rbrics_bonds = find_rbrics_bonds_live(mol, rbrics)
 
     winning = [a for a in annotations if not a.get("overshadowed", False)]
-    region = _assign_regions(
-        mol, winning, unannotated_policy, group_rank, motif_integrity
-    )
+    region = _assign_regions(mol, winning, unannotated_policy, group_rank, motif_integrity)
 
     # which R-BRICS bonds straddle two regions -> these are the cuts.
     # Under 'merge', a bond touching an unannotated atom (region -1) is never a
@@ -368,9 +364,7 @@ def build_block_graph(
         else:
             dummy_labels.append((reg.id(rb.tag_b), reg.id(rb.tag_a)))
 
-    frag_mol = Chem.FragmentOnBonds(
-        mol, bond_idxs, addDummies=True, dummyLabels=dummy_labels
-    )
+    frag_mol = Chem.FragmentOnBonds(mol, bond_idxs, addDummies=True, dummyLabels=dummy_labels)
     frag_atom_tuples = Chem.GetMolFrags(frag_mol, asMols=False, sanitizeFrags=False)
     frag_mols = Chem.GetMolFrags(frag_mol, asMols=True, sanitizeFrags=False)
 
@@ -383,7 +377,7 @@ def build_block_graph(
         for at in w["atom_indices"]:
             motif_by_atom.setdefault(at, set()).add(w["name"])
 
-    for blk_id, (atom_tuple, fmol) in enumerate(zip(frag_atom_tuples, frag_mols)):
+    for blk_id, (atom_tuple, fmol) in enumerate(zip(frag_atom_tuples, frag_mols, strict=True)):
         orig_atoms = tuple(a for a in atom_tuple if a < n_orig)
         for a in orig_atoms:
             atom2block[a] = blk_id
@@ -393,9 +387,7 @@ def build_block_graph(
             blk_smiles = Chem.MolToSmiles(fmol)
         except Exception:
             blk_smiles = Chem.MolToSmiles(fmol, canonical=False)
-        blocks.append(
-            Block(blk_id, orig_atoms, tuple(motifs), blk_smiles, regions)
-        )
+        blocks.append(Block(blk_id, orig_atoms, tuple(motifs), blk_smiles, regions))
 
     edges = []
     for _bi, rb in cut_specs:

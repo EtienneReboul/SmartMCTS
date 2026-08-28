@@ -82,6 +82,11 @@ extend-immutable-calls = [
     "typer.Option",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# Curated R-BRICS SMARTS definitions: a data table of long pattern strings that
+# cannot be wrapped without hurting readability.
+"src/smart_mcts/rbrics_patterns.py" = ["E501"]
+
 [tool.coverage.run]
 branch = true
 parallel = true

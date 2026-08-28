@@ -18,10 +18,7 @@ def prep_rbrics_data() -> dict:
                             and the bond information as value
     """
     # prepare the chemical group pattern
-    chemical_group = {
-        tag: Chem.MolFromSmarts(pattern)
-        for tag, pattern in RBRICSChemicalGroups().patterns.items()
-    }
+    chemical_group = {tag: Chem.MolFromSmarts(pattern) for tag, pattern in RBRICSChemicalGroups().patterns.items()}
 
     # prepare the retro-synthetic bond pattern
     rbond_pattern = {
@@ -30,9 +27,7 @@ def prep_rbrics_data() -> dict:
     }
 
     # prepare the mapping between set of chemical group and string tag
-    set2tag = {
-        frozenset(tag.split("-")): tag for tag in RBRICSRetrosynthesisBound().patterns.keys()
-    }
+    set2tag = {frozenset(tag.split("-")): tag for tag in RBRICSRetrosynthesisBound().patterns.keys()}
 
     return {"chemical_group": chemical_group, "rbond": rbond_pattern, "set2tag": set2tag}
 
@@ -64,12 +59,10 @@ def check_chemical_group(mol: Chem.Mol, chemical_pattern: dict) -> set[str]:
     Returns:
         set[str]: a set of all the chemical tag of chemical group found in the mol
     """
-    return {
-        pattern for pattern, sma_mol in chemical_pattern.items() if mol.HasSubstructMatch(sma_mol)
-    }
+    return {pattern for pattern, sma_mol in chemical_pattern.items() if mol.HasSubstructMatch(sma_mol)}
 
 
-def package_bond_info(bonds: dict[dict]) -> list[dict]:
+def package_bond_info(bonds: dict[frozenset[int], dict[int, set[str]]]) -> list[dict]:
     """Package the bond information in a list of dictionary.
     This is needed to be able to write the bond information as a nested structure
     in a parquet file
@@ -104,8 +97,11 @@ def package_bond_info(bonds: dict[dict]) -> list[dict]:
 
 
 def annotate_rbond(
-    mol: Chem.Mol, rbond_pattern: dict[frozenset, str], chemical_group: set[str], set2tag: dict
-) -> dict[dict[set[str]]]:
+    mol: Chem.Mol,
+    rbond_pattern: dict[frozenset[str], Chem.Mol],
+    chemical_group: set[str],
+    set2tag: dict[frozenset[str], str],
+) -> dict[frozenset[int], dict[int, set[str]]]:
     """Annotation of the retro-synthetic bonds in a molecule
 
     Args:
@@ -122,7 +118,7 @@ def annotate_rbond(
             of the bond as key and the chemical tag of the corresponding atom as value
     """
     # declare local variable
-    bonds = defaultdict(lambda: defaultdict(set))
+    bonds: dict[frozenset[int], dict[int, set[str]]] = defaultdict(lambda: defaultdict(set))
 
     # get map between current atoms index and canonical atoms idx
     idx2canonicalidx = Chem.CanonicalRankAtoms(mol)
@@ -160,7 +156,7 @@ def annotate_rbond(
 def retrosynthetic_analysis(
     smiles: str,
     chemical_dict: dict | None = None,
-) -> dict[dict[set[str]]]:
+) -> dict[frozenset[int], dict[int, set[str]]]:
     """This function find the retro-synthetic bonds in each molecule.
 
     Args:
@@ -190,8 +186,6 @@ def retrosynthetic_analysis(
     chemical_matches_set = check_chemical_group(mol, chemical_dict["chemical_group"])
 
     # check for r-bond pattern in molecule and time the process
-    result_dict = annotate_rbond(
-        mol, chemical_dict["rbond"], chemical_matches_set, chemical_dict["set2tag"]
-    )
+    result_dict = annotate_rbond(mol, chemical_dict["rbond"], chemical_matches_set, chemical_dict["set2tag"])
 
     return result_dict

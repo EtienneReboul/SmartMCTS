@@ -34,7 +34,7 @@ from dataclasses import dataclass, field
 from rdkit import Chem
 
 # Reuse the user's curated R-BRICS pattern definitions.
-from smiles_blocks.rbrics_patterns import (
+from smart_mcts.rbrics_patterns import (
     RBRICSChemicalGroups,
     RBRICSRetrosynthesisBound,
 )

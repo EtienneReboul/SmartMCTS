@@ -45,6 +45,8 @@ REGISTRY: dict[str, str] = {
     "smartchemist/cyclic.csv": "sha256:db9b67aa285a8e026fcb12ffeb412941ad125e3a1600236dbe1e795dd1727d17",
     "smartchemist/biologicals.csv": "sha256:8a6040ba516e294afa5725ddeee92a616349c36fd0c0c252d41d0b138e9853fd",
     "smartchemist/smarts_with_hierarchy.csv": "sha256:16455de171ac891fc4e177ab78e614eb7e2fcecafe00d28ce5bdd529c22c0ba1",
+    # CC-BY-ND 4.0 license + attribution text for the SMARTS pattern collection.
+    "smartchemist/License_for_patterns_here": "sha256:5e9a75ced22706937aa22109e7ec6e1cbb5fc68138dac8bedc61e488e09cb82e",
     "moses/dataset_v1.csv": "sha256:bb47a94d347afd476d3828b5e26dceeabc42a2d8cf92a791d00349f22fea0d8b",
 }
 
@@ -54,6 +56,7 @@ URLS: dict[str, str] = {
     "smartchemist/cyclic.csv": _SMARTCHEMIST_BASE + "cyclic.csv",
     "smartchemist/biologicals.csv": _SMARTCHEMIST_BASE + "biologicals.csv",
     "smartchemist/smarts_with_hierarchy.csv": _SMARTCHEMIST_BASE + "smarts_with_hierarchy.csv",
+    "smartchemist/License_for_patterns_here": _SMARTCHEMIST_BASE + "License_for_patterns_here",
     "moses/dataset_v1.csv": _MOSES_BASE + "dataset_v1.csv",
 }
 

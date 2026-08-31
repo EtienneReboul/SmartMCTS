@@ -16,6 +16,7 @@ from smart_mcts.datasets._core import (
 )
 from smart_mcts.datasets.moses import load_moses
 from smart_mcts.datasets.smartchemist import (
+    fetch_smartchemist_license,
     fetch_smartchemist_smarts,
     load_smartchemist_annotator,
 )
@@ -26,6 +27,7 @@ __all__ = [
     "fetch_file",
     "get_data_home",
     "load_moses",
+    "fetch_smartchemist_license",
     "fetch_smartchemist_smarts",
     "load_smartchemist_annotator",
 ]

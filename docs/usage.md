@@ -48,7 +48,7 @@ First call downloads `dataset_v1.csv` (~84 MB) once. `subset` is `None`,
 ```python
 from smart_mcts.datasets import fetch_smartchemist_smarts, load_smartchemist_annotator
 
-paths = fetch_smartchemist_smarts()  # dict of 4 local CSV paths
+paths = fetch_smartchemist_smarts()  # 4 CSV paths + "license" key
 annotator = load_smartchemist_annotator()  # compiled + cached SmartChemistAnnotator
 ```
 
@@ -56,6 +56,13 @@ annotator = load_smartchemist_annotator()  # compiled + cached SmartChemistAnnot
 library once (~30 s), and caches the compiled index next to the CSVs
 (`<data_home>/smartchemist/annotator_index.pkl`) so later calls are instant. Pass
 `rebuild=True` to recompile, `force_update=True` to re-download.
+
+The SMARTS pattern collection is licensed **CC-BY-ND 4.0**. The upstream license
+and attribution text is downloaded with the patterns to
+`<data_home>/smartchemist/License_for_patterns_here` (also available on its own
+via `fetch_smartchemist_license()`). Per that license, `smart-mcts --version`
+prints the required attribution notice; see the README's *Acknowledgments*
+section for the citation.
 
 Common keyword arguments across all loaders: `data_dir`, `verbose`,
 `force_update`.

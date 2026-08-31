@@ -15,7 +15,21 @@ _SMARTS_FILES: dict[str, str] = {
     "hierarchy": "smartchemist/smarts_with_hierarchy.csv",
 }
 
+#: The SMARTS collection is CC-BY-ND 4.0; this is the upstream license +
+#: attribution text, always fetched alongside the patterns.
+_LICENSE_FILE = "smartchemist/License_for_patterns_here"
+
 _INDEX_CACHE_NAME = "smartchemist/annotator_index.pkl"
+
+
+def fetch_smartchemist_license(
+    data_dir: str | os.PathLike | None = None,
+    *,
+    verbose: bool = False,
+    force_update: bool = False,
+) -> Path:
+    """Download (once) the CC-BY-ND 4.0 license/attribution text for the SMARTS collection."""
+    return fetch_file(_LICENSE_FILE, data_dir, verbose=verbose, force_update=force_update)
 
 
 def fetch_smartchemist_smarts(
@@ -24,14 +38,17 @@ def fetch_smartchemist_smarts(
     verbose: bool = False,
     force_update: bool = False,
 ) -> dict[str, Path]:
-    """Download (once) the four SmartChemist CSVs and return their local paths.
+    """Download (once) the SmartChemist CSVs and return their local paths.
 
-    Keys: ``functional_groups``, ``cyclic``, ``biologicals``, ``hierarchy``.
+    Keys: ``functional_groups``, ``cyclic``, ``biologicals``, ``hierarchy``, and
+    ``license`` (the CC-BY-ND 4.0 text, always fetched with the patterns).
     """
-    return {
+    paths = {
         name: fetch_file(key, data_dir, verbose=verbose, force_update=force_update)
         for name, key in _SMARTS_FILES.items()
     }
+    paths["license"] = fetch_smartchemist_license(data_dir, verbose=verbose, force_update=force_update)
+    return paths
 
 
 def load_smartchemist_annotator(

@@ -58,7 +58,7 @@ documentation = "https://EtienneReboul.github.io/smart-mcts/"
 homepage = "https://github.com/EtienneReboul/smart-mcts"
 
 [project.scripts]
-smart_mcts = "smart_mcts.cli:app"
+smart-mcts = "smart_mcts.cli:app"
 
 [tool.ty]
 # All rules are enabled as "error" by default; no need to specify unless overriding.

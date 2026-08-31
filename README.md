@@ -45,6 +45,25 @@ Full documentation is available on
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, testing, and
 documentation instructions.
 
+## Acknowledgments
+
+This software uses the **SMARTChemist Pattern Collection** developed at the
+University of Hamburg, Germany. For details see <https://chemist.smarts.plus>.
+The pattern collection is licensed under
+[CC-BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/); the full license
+text is fetched alongside the patterns
+(`<data_home>/smartchemist/License_for_patterns_here`). The same notice is printed
+by `smart-mcts --version`.
+
+If you use it in scientific work, cite:
+
+> Gutermuth, T. *et al.* "SmartChemist – Simplifying communication about organic
+> chemical structures." *Journal of Chemical Information and Modeling*, 2025.
+
+R-BRICS fragmentation follows Wang *et al.*, "R-BRICS" (see
+[BiomedSciAI/r-BRICS](https://github.com/BiomedSciAI/r-BRICS)); the MOSES set is
+from [molecularsets/moses](https://github.com/molecularsets/moses).
+
 ## Author
 
 Smart MCTS was created in 2026 by Etienne Reboul.

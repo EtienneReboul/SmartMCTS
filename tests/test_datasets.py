@@ -41,6 +41,14 @@ def test_pinned_revisions_are_full_sha1():
         assert re.match(r"^[0-9a-f]{40}$", rev)
 
 
+def test_smartchemist_files_and_license_are_registered():
+    from smart_mcts.datasets import smartchemist
+
+    keys = {*smartchemist._SMARTS_FILES.values(), smartchemist._LICENSE_FILE}
+    assert keys <= set(_core.REGISTRY)
+    assert smartchemist._LICENSE_FILE == "smartchemist/License_for_patterns_here"
+
+
 def test_load_moses_rejects_unknown_subset():
     with pytest.raises(ValueError, match="subset must be"):
         datasets.load_moses("validation")
